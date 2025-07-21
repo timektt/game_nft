@@ -1,6 +1,5 @@
- 'use client'
+'use client'
 
-import { useState } from 'react'
 import Header from '@/components/shared/Header'
 import Hero from '@/components/sections/Hero'
 import GameFeatures from '@/components/sections/GameFeatures'
@@ -10,16 +9,12 @@ import Roadmap from '@/components/sections/Roadmap'
 import Newsletter from '@/components/Newsletter'
 import Footer from '@/components/shared/Footer'
 import WalletModal from '@/components/WalletModal'
-import FloatingWalletBtn from '@/components/FloatingWalletBtn'
+import { useWallet } from '@/context/Web3Context'
+import { useState } from 'react'
 
 export default function Home() {
+  const { isConnected, connectWallet } = useWallet()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isConnected, setIsConnected] = useState(false)
-
-  const handleConnect = () => {
-    setIsConnected(true)
-    setIsModalOpen(false)
-  }
 
   return (
     <>
@@ -32,18 +27,15 @@ export default function Home() {
       <Newsletter />
       <Footer />
 
-      {/* ✅ ส่ง props ให้ถูกต้อง */}
       <WalletModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onConnect={handleConnect}
+        onConnect={async () => {
+          await connectWallet()
+          setIsModalOpen(false)
+        }}
       />
 
-      <FloatingWalletBtn
-        isConnected={isConnected}
-        onClick={() => setIsModalOpen(true)}
-      />
     </>
   )
 }
-
